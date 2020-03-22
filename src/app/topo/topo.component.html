@@ -1,0 +1,39 @@
+
+<div class="fixed-top bg-light">
+  <nav class="navbar navbar-light bg-faded">
+    <div class="container">
+      <div class="col-md-4">
+        <a routerLink="" class="navbar-brand"><img src="/assets/logo.png" /></a>
+      </div>
+      <div class="col-md-6">
+        <input type="search" class="form-control" placeholder="Pesquise por ofertas..." #termoDaPesquisa (keyup)="pesquisa(termoDaPesquisa.value)">
+        
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let oferta of ofertas | async">
+            <a [routerLink]="['/oferta', oferta.id]" (click)="limpaPesquisa()">{{ oferta.titulo | textsize:15 }}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-2 text-right">
+        <a href="#" id="link"><img src="/assets/carrinho.png" /></a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="menu">
+    <div class="container">
+      <ul class="nav">
+        <li class="nav-item">
+          <a routerLink="restaurantes" routerLinkActive="active" class="nav-link" >Restaurantes</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="diversao" routerLinkActive="active" class="nav-link" >Diversão</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="banner">
+  <img src="/assets/banners/img_1.jpg" />
+</div>
