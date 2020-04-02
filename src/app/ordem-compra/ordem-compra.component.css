@@ -7,3 +7,5 @@ input.ng-invalid.ng-touched,
 select.ng-invalid.ng-touched{border: 1px solid red;}
 input.ng-valid.ng-touched,
 select.ng-valid.ng-touched{border: 1px solid green;}
+
+.form-item{background: #FAFAFA; padding: 20px; border-bottom: solid 1px #F0F0F0}

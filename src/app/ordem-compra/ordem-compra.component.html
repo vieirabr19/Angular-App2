@@ -1,86 +1,66 @@
 <div class="container">
   <div class="ordem-compra" *ngIf="idPedidoCompra === undefined">
-    <form #formulario="ngForm" (ngSubmit)="confirmarCompra()" novalidate>
-
+    <form [formGroup]="formulario" (ngSubmit)="confirmarCompra()" novalidate>
       <h5>Sua Compra</h5>
       <hr />
 
-      <div class="form-row" style="background: #FAFAFA; padding: 20px; border-bottom: solid 1px #F0F0F0">
-        <div class="form-group col-sm-1">
-          <img src="/assets/ofertas/1/img1.jpg" class="img-fluid">
-        </div>
-        <div class="form-group col-sm-6">
-          Super Burger
-          <br />
-          Rodízio de Mini-hambúrger com opção de entrada.
-        </div>
-
-        <div>
-          <div class="row">
-            <div class="col">
-              <button type="button" class="btn btn-link">-</button>
-              1
-              <button type="button" class="btn btn-link">+</button>
+      <div *ngIf="carrinhoService.exibirItens().length; else carrinhoVazio">
+        <div class="form-row form-item" *ngFor="let item of itensCarrinho">
+          <div class="form-group col-sm-1">
+            <img [src]="item.img.url" class="img-fluid">
+          </div>
+          <div class="form-group col-sm-6">
+            {{ item.titulo }}
+            <br />
+            {{ item.descricao_oferta }}
+          </div>
+  
+          <div>
+            <div class="row">
+              <div class="col">
+                <button type="button" class="btn btn-link" (click)="removeQuantidadeCarrinho(item)">-</button>
+                {{ item.quantidade }}
+                <button type="button" class="btn btn-link" (click)="addQuantidadeCarrinho(item)">+</button>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="form-group col-sm-3 d-flex justify-content-end">
-          29.90
-        </div>
-      </div>
-
-      <div class="form-row" style="background: #FAFAFA; padding: 20px; border-bottom: solid 1px #F0F0F0">
-        <div class="form-group col-sm-1">
-          <img src="/assets/ofertas/4/img1.jpg" class="img-fluid">
-        </div>
-        <div class="form-group col-sm-6">
-          Estância das águas
-          <br />
-          Diversão garantida com piscinas, trilhas e muito mais.
-        </div>
-
-        <div>
-          <div class="row">
-            <div class="col">
-              <button type="button" class="btn btn-link">-</button>
-              1
-              <button type="button" class="btn btn-link">+</button>
-            </div>
+  
+          <div class="form-group col-sm-3 d-flex justify-content-end">
+            {{ item.quantidade * item.valor | currency:'BRL' }}
           </div>
         </div>
-
-        <div class="form-group col-sm-3 d-flex justify-content-end">
-          31.90
+        
+        <div class="form-row">
+          <div class="form-group col d-flex justify-content-end">
+            <h4>Total do pedido: {{ carrinhoService.totalItemCarrinho() | currency:'BRL' }}</h4>
+          </div>
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group col d-flex justify-content-end">
-          <h4>Total do pedido: 61.80</h4>
+      <ng-template #carrinhoVazio>
+        <div class="form-row form-item d-flex justify-content-center">
+          Seu carrinho está vázio! Não perca tempo, aproveite as ofertas.
         </div>
-      </div>
-      <br />
+      </ng-template>
 
       <h5>Dados de entrega</h5>
       <hr />
 
       <div class="form-row">
-
         <div class="form-group col-md-6">
-          <input type="text" class="form-control" placeholder="Endereço" name="endereco" autocomplete="off" minlength="3" required #inputEndereco="ngModel" ngModel>
-          <small class="form-text text-success" *ngIf="inputEndereco.valid && inputEndereco.touched">OK</small>
-          <small class="form-text text-danger" *ngIf="!inputEndereco.valid && inputEndereco.touched">Endereço inválido</small>
+          <input type="text" class="form-control" placeholder="Endereço" autocomplete="off" formControlName="endereco">
+          <small class="form-text text-success" *ngIf="formulario.get('endereco').valid && formulario.get('endereco').touched">Ok</small>
+          <small class="form-text text-danger" *ngIf="!formulario.get('endereco').valid && formulario.get('endereco').touched">Endereço inválido</small>
         </div>
 
         <div class="form-group col-md-2">
-          <input type="text" class="form-control" placeholder="Número" name="numero" autocomplete="off" minlength="1" required #inputNumero="ngModel" ngModel>
-          <small class="form-text text-success" *ngIf="inputNumero.valid && inputNumero.touched">Ok</small>
-          <small class="form-text text-danger" *ngIf="!inputNumero.valid && inputNumero.touched">Número inválido</small>
+          <input type="text" class="form-control" placeholder="Número" autocomplete="off" formControlName="numero">
+          <small class="form-text text-success" *ngIf="formulario.get('numero').valid && formulario.get('numero').touched">Ok</small>
+          <small class="form-text text-danger" *ngIf="!formulario.get('numero').valid && formulario.get('numero').touched">Número inválido</small>
         </div>
 
         <div class="form-group col-md-4">
-          <input type="text" class="form-control" placeholder="Complemento" name="complemento" ngModel autocomplete="off">
+          <input type="text" class="form-control" placeholder="Complemento" autocomplete="off" formControlName="complemento">
         </div>
 
       </div>
@@ -90,14 +70,15 @@
       <hr />
 
       <div class="form-row">
+
         <div class="form-group col-md-3">
-          <select class="form-control" name="formaPagamento" required #selectFormaPagamento="ngModel" ngModel>
+          <select class="form-control" formControlName="formaPagamento">
             <option value="">Selecione uma opção</option>
             <option value="dinheiro">Dinheiro</option>
             <option value="debito">Débito</option>
           </select>
-          <small class="form-text text-success" *ngIf="selectFormaPagamento.valid && selectFormaPagamento.touched">OK</small>
-          <small class="form-text text-danger" *ngIf="!selectFormaPagamento.valid && selectFormaPagamento.touched">Forma de pagamento inválida</small>
+          <small class="form-text text-success" *ngIf="formulario.get('formaPagamento').valid && formulario.get('formaPagamento').touched">Ok</small>
+          <small class="form-text text-danger" *ngIf="!formulario.get('formaPagamento').valid && formulario.get('formaPagamento').touched">Forma pagamento inválida</small>
         </div>
       </div>
 
